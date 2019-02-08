@@ -50,8 +50,12 @@ while(my $line = <IN>){
         }
     }
 }
+#if ($max_length<1){
+#    print "200\n";
+#}
+#else{
 print "$max_length\n";
-
+#}
 
 sub get_filetype{
     my ($file) = @_;

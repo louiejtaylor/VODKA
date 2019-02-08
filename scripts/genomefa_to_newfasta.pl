@@ -16,7 +16,7 @@ if (@ARGV<4){
 my $fasta = $ARGV[0];
 my $bases_to_use = $ARGV[1];
 $bases_to_use *= -1;
-my $bp = $ARGV[2];
+my $bp = $ARGV[2]; #100; #was zero: max read length issues?!
 my $out = $ARGV[3];
 my $ft = `file $fasta`;
 chomp($ft);
@@ -52,20 +52,26 @@ my $seql = length($onelineseq);
 my $for_gc = $seql+$bases_to_use;
 my $threekb = substr($onelineseq, $bases_to_use);
 
+#print STDOUT $threekb;
+
 my $s2_cnt = 0;
 my $length = length($threekb);
+
+print STDOUT $length . ' ' . $seql . "\n";
 
 #25 to $bp - 1 
 my $tbp = 25;
 my $last_s2_start = $length - $tbp;
 my $s2_start = $length - $bp - $s2_cnt;
 #die $last_s2_start;
+print STDOUT $last_s2_start . " " . $s2_start;
 open(OUT, ">$out");
 open(OT, ">$out.temp");
 while($last_s2_start > $s2_start){
     my $s2_st = -$tbp;
     my $s1_cnt = 0;
     my $s2 = substr($threekb, -$tbp, $tbp);
+    #print STDOUT $s2 . "\n";
     my $s2_rc = &reversecomplement($s2);
     for (my $i=0;$i<$length;$i++){
 	my $s1 = substr($threekb, $s1_cnt, $bp);
@@ -94,6 +100,7 @@ while ($s2_start > 0){
     my $s2_st = -$bp-$s2_cnt;
     my $s1_cnt = 0;
     my $s2 = substr($threekb, -$bp-$s2_cnt, $bp);
+    #print STDOUT "~" . $s2 . "\n";
     my $s2_rc = &reversecomplement($s2);
     for (my $i=0;$i<$length;$i++){
 	my $s1 = substr($threekb, $s1_cnt, $bp);
@@ -123,6 +130,7 @@ print "got here\n";
 
 sub reversecomplement () {
     (my $sq) = @_;
+    #print STDOUT $sq . "\n";
     my @A = split(//,$sq);
     my $rev = "";
     for(my $i=@A-1; $i>=0; $i--) {
@@ -143,9 +151,54 @@ sub reversecomplement () {
             $rev = $rev . "C";
             $flag = 1;
         }
+        if($A[$i] eq 'M') {
+            $rev = $rev . "K";
+            $flag = 1;
+        }
+        if($A[$i] eq 'K') {
+            $rev = $rev . "M";
+            $flag = 1;
+        }
+        if($A[$i] eq 'R') {
+            $rev = $rev . "Y";
+            $flag = 1;
+        }
+        if($A[$i] eq 'Y') {
+            $rev = $rev . "R";
+            $flag = 1;
+        }
+        if($A[$i] eq 'W') {
+            $rev = $rev . "W";
+            $flag = 1;
+        }
+        if($A[$i] eq 'S') {
+            $rev = $rev . "S";
+            $flag = 1;
+        }
+        if($A[$i] eq 'V') {
+            $rev = $rev . "B";
+            $flag = 1;
+        }
+        if($A[$i] eq 'B') {
+            $rev = $rev . "V";
+            $flag = 1;
+        }
+        if($A[$i] eq 'H') {
+            $rev = $rev . "D";
+            $flag = 1;
+        }
+        if($A[$i] eq 'D') {
+            $rev = $rev . "H";
+            $flag = 1;
+        }
+        if($A[$i] eq 'N') {
+            $rev = $rev . "N";
+            $flag = 1;
+        }
         if($flag == 0) {
             $rev = $rev . $A[$i];
         }
     }
+    #print STDOUT $rev . "\n";
     return $rev;
 }
