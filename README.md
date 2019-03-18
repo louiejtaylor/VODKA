@@ -14,6 +14,9 @@
 
 * options : <br>
     * -bp_from_right &lt;n> : &lt;n> is number of bases from right. (default: 3000)
+    * -max_readlen <n> : <n> is maximum read length
+    * -threads <n> : use <n> threads
+    * -v/--version: print version
     * -h/--help : print this usage.
 
 ### Requirements
